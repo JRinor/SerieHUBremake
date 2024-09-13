@@ -7,18 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AE5BEB312C9476A500536890 /* SeriesHUBremakeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB302C9476A500536890 /* SeriesHUBremakeApp.swift */; };
-		AE5BEB332C9476A500536890 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB322C9476A500536890 /* ContentView.swift */; };
 		AE5BEB352C9476A700536890 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE5BEB342C9476A700536890 /* Assets.xcassets */; };
 		AE5BEB382C9476A700536890 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE5BEB372C9476A700536890 /* Preview Assets.xcassets */; };
+		AE5BEB3F2C9476C200536890 /* SeriesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB3E2C9476C200536890 /* SeriesApp.swift */; };
+		AE5BEB452C94775300536890 /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB442C94775300536890 /* Series.swift */; };
+		AE5BEB472C94777C00536890 /* SeriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB462C94777C00536890 /* SeriesViewModel.swift */; };
+		AE5BEB492C94779900536890 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB482C94779900536890 /* APIService.swift */; };
+		AE5BEB4B2C9477B200536890 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB4A2C9477B200536890 /* ContentView.swift */; };
+		AE5BEB4D2C9477CE00536890 /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB4C2C9477CE00536890 /* SectionView.swift */; };
+		AE5BEB4F2C9477EA00536890 /* SerieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5BEB4E2C9477EA00536890 /* SerieItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		AE5BEB2D2C9476A500536890 /* SeriesHUBremake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeriesHUBremake.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AE5BEB302C9476A500536890 /* SeriesHUBremakeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesHUBremakeApp.swift; sourceTree = "<group>"; };
-		AE5BEB322C9476A500536890 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AE5BEB342C9476A700536890 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE5BEB372C9476A700536890 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AE5BEB3E2C9476C200536890 /* SeriesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesApp.swift; sourceTree = "<group>"; };
+		AE5BEB442C94775300536890 /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
+		AE5BEB462C94777C00536890 /* SeriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewModel.swift; sourceTree = "<group>"; };
+		AE5BEB482C94779900536890 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		AE5BEB4A2C9477B200536890 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AE5BEB4C2C9477CE00536890 /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
+		AE5BEB4E2C9477EA00536890 /* SerieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerieItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,10 +61,13 @@
 		AE5BEB2F2C9476A500536890 /* SeriesHUBremake */ = {
 			isa = PBXGroup;
 			children = (
-				AE5BEB302C9476A500536890 /* SeriesHUBremakeApp.swift */,
-				AE5BEB322C9476A500536890 /* ContentView.swift */,
+				AE5BEB432C9476DF00536890 /* Services */,
+				AE5BEB422C9476D900536890 /* Views */,
+				AE5BEB412C9476D000536890 /* ViewModels */,
+				AE5BEB402C9476CA00536890 /* Models */,
 				AE5BEB342C9476A700536890 /* Assets.xcassets */,
 				AE5BEB362C9476A700536890 /* Preview Content */,
+				AE5BEB3E2C9476C200536890 /* SeriesApp.swift */,
 			);
 			path = SeriesHUBremake;
 			sourceTree = "<group>";
@@ -65,6 +78,40 @@
 				AE5BEB372C9476A700536890 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		AE5BEB402C9476CA00536890 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AE5BEB442C94775300536890 /* Series.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AE5BEB412C9476D000536890 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AE5BEB462C94777C00536890 /* SeriesViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AE5BEB422C9476D900536890 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AE5BEB4A2C9477B200536890 /* ContentView.swift */,
+				AE5BEB4C2C9477CE00536890 /* SectionView.swift */,
+				AE5BEB4E2C9477EA00536890 /* SerieItemView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AE5BEB432C9476DF00536890 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AE5BEB482C94779900536890 /* APIService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +184,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE5BEB332C9476A500536890 /* ContentView.swift in Sources */,
-				AE5BEB312C9476A500536890 /* SeriesHUBremakeApp.swift in Sources */,
+				AE5BEB4B2C9477B200536890 /* ContentView.swift in Sources */,
+				AE5BEB472C94777C00536890 /* SeriesViewModel.swift in Sources */,
+				AE5BEB4F2C9477EA00536890 /* SerieItemView.swift in Sources */,
+				AE5BEB4D2C9477CE00536890 /* SectionView.swift in Sources */,
+				AE5BEB452C94775300536890 /* Series.swift in Sources */,
+				AE5BEB492C94779900536890 /* APIService.swift in Sources */,
+				AE5BEB3F2C9476C200536890 /* SeriesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
