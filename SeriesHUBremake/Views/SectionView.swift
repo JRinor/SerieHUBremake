@@ -8,7 +8,9 @@ struct SectionView: View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(.headline)
+                .foregroundColor(.white) // Couleur du texte en blanc
                 .padding(.leading)
+            
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(series) { serie in
@@ -19,4 +21,3 @@ struct SectionView: View {
         }
     }
 }
-

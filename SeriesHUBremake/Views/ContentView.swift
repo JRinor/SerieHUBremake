@@ -6,52 +6,79 @@ struct ContentView: View {
     @State private var selectedMenuItem: String?
     
     var body: some View {
-        ZStack {
-            NavigationView {
+        NavigationView {
+            ZStack {
+                Color.black.edgesIgnoringSafeArea(.all)
+                
                 ScrollView {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    } else if let errorMessage = viewModel.errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    } else {
-                        VStack(alignment: .leading, spacing: 20) {
-                            ContinuousScrollingSection(title: "Tendances", series: viewModel.trendingSeries, scrollDuration: 30)
-                            ContinuousScrollingSection(title: "Les mieux notées", series: viewModel.topRatedSeries, scrollDuration: 35)
+                    VStack(spacing: 20) {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else if let errorMessage = viewModel.errorMessage {
+                            Text(errorMessage)
+                                .foregroundColor(.red)
+                        } else {
+                            SectionView(title: "Tendances", series: viewModel.trendingSeries)
+                            SectionView(title: "Les mieux notées", series: viewModel.topRatedSeries)
                             
                             ForEach(viewModel.seriesByPlatform.keys.sorted(), id: \.self) { platform in
-                                ContinuousScrollingSection(
-                                    title: platform,
-                                    series: viewModel.seriesByPlatform[platform] ?? [],
-                                    scrollDuration: Double.random(in: 25...40) // Durée aléatoire pour chaque plateforme
-                                )
+                                SectionView(title: platform, series: viewModel.seriesByPlatform[platform] ?? [])
                             }
                         }
                     }
+                    .padding(.top, 100) // Ajuster le padding pour éviter l'encoche
                 }
-                .navigationTitle("Séries TV")
-                .navigationBarItems(leading: Button(action: {
-                    withAnimation {
-                        self.showMenu.toggle()
+                
+                VStack {
+                    HStack {
+                        Button(action: {
+                            withAnimation {
+                                self.showMenu.toggle()
+                            }
+                        }) {
+                            Image(systemName: "line.horizontal.3")
+                                .foregroundColor(.white)
+                        }
+                        
+                        Spacer()
+                        
+                        Text("SeriesHUB")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            // Action pour la recherche
+                        }) {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.white)
+                        }
                     }
-                }) {
-                    Image(systemName: "line.horizontal.3")
-                        .imageScale(.large)
+                    .padding()
+                    .background(Color.black.opacity(0.8))
+                    .padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top) // Ajuster pour l'encoche
+                    
+                    Spacer()
+                }
+                .edgesIgnoringSafeArea(.top)
+                
+                SideMenuView(isOpen: $showMenu, width: 270, onClose: {
+                    withAnimation {
+                        self.showMenu = false
+                    }
+                }, onMenuItemSelected: { item in
+                    self.selectedMenuItem = item
+                    withAnimation {
+                        self.showMenu = false
+                    }
+                    print("Selected menu item: \(item)")
                 })
             }
-            
-            SideMenuView(isOpen: $showMenu, width: 270, onClose: {
-                withAnimation {
-                    self.showMenu = false
-                }
-            }, onMenuItemSelected: { item in
-                self.selectedMenuItem = item
-                withAnimation {
-                    self.showMenu = false
-                }
-                print("Selected menu item: \(item)")
-            })
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
             viewModel.loadData()
         }

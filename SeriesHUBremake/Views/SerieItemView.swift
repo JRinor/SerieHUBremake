@@ -31,10 +31,11 @@ struct SerieItemView: View {
                 .font(.caption)
                 .lineLimit(1)
                 .frame(width: 100)
+                .foregroundColor(.white) // Couleur du texte en blanc
             
             Text(String(format: "%.1f", serie.voteAverage))
                 .font(.caption2)
-                .foregroundColor(.secondary)
+                .foregroundColor(.white) // Couleur du texte en blanc
         }
         .frame(width: 100)
     }
