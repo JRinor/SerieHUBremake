@@ -1,8 +1,16 @@
-//
-//  SearchResultsView.swift
-//  SeriesHUBremake
-//
-//  Created by Rayan Mammeri on 14/09/2024.
-//
+import SwiftUI
 
-import Foundation
+struct SearchResultsView: View {
+    let series: [Series]
+    
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 20) {
+                ForEach(series) { serie in
+                    SerieItemView(serie: serie)
+                }
+            }
+            .padding()
+        }
+    }
+}

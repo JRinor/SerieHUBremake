@@ -9,33 +9,29 @@ struct SerieItemView: View {
                 switch phase {
                 case .empty:
                     ProgressView()
-                        .frame(width: 100, height: 150)
                 case .success(let image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 100, height: 150)
-                        .clipped()
                 case .failure(_):
                     Image(systemName: "photo")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 100, height: 150)
                         .foregroundColor(.gray)
                 @unknown default:
                     EmptyView()
                 }
             }
+            .frame(width: 100, height: 150)
+            .cornerRadius(10)
             
             Text(serie.name)
                 .font(.caption)
-                .lineLimit(1)
-                .frame(width: 100)
-                .foregroundColor(.white) // Couleur du texte en blanc
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white)
             
             Text(String(format: "%.1f", serie.voteAverage))
                 .font(.caption2)
-                .foregroundColor(.white) // Couleur du texte en blanc
+                .foregroundColor(.yellow)
         }
         .frame(width: 100)
     }

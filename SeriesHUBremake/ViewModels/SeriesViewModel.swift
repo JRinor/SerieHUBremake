@@ -14,12 +14,21 @@ class SeriesViewModel: ObservableObject {
     ]
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var searchText = ""
+    @Published var filteredSeries: [Series] = []
     
     private var cancellables = Set<AnyCancellable>()
     private let apiService: APIService
     
     init(apiService: APIService = APIService()) {
         self.apiService = apiService
+        
+        $searchText
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.filterSeries()
+            }
+            .store(in: &cancellables)
     }
     
     func loadData() {
@@ -49,7 +58,17 @@ class SeriesViewModel: ObservableObject {
             for (platform, series) in platformResults {
                 self?.seriesByPlatform[platform] = series
             }
+            self?.filterSeries()
         }
         .store(in: &cancellables)
+    }
+    
+    func filterSeries() {
+        if searchText.isEmpty {
+            filteredSeries = []
+        } else {
+            filteredSeries = (trendingSeries + topRatedSeries + seriesByPlatform.values.flatMap { $0 })
+                .filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
     }
 }
