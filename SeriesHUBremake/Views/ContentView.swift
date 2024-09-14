@@ -27,7 +27,7 @@ struct ContentView: View {
                             }
                         }
                     }
-                    .padding(.top, 100) // Ajuster le padding pour éviter l'encoche
+                    .padding(.top, 100) // Augmentez cette valeur pour éviter le chevauchement
                 }
                 
                 VStack {
@@ -43,10 +43,15 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        Text("SeriesHUB")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                        if let image = UIImage(named: "Logo") {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 50)
+                        } else {
+                            Text("Logo non trouvé")
+                                .foregroundColor(.red)
+                        }
                         
                         Spacer()
                         
@@ -59,7 +64,7 @@ struct ContentView: View {
                     }
                     .padding()
                     .background(Color.black.opacity(0.8))
-                    .padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top) // Ajuster pour l'encoche
+                    .padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top)
                     
                     Spacer()
                 }
