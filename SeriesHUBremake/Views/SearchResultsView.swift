@@ -5,12 +5,13 @@ struct SearchResultsView: View {
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 20) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 3), spacing: 20) {
                 ForEach(series) { serie in
                     SerieItemView(serie: serie)
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.top, 10)
         }
     }
 }

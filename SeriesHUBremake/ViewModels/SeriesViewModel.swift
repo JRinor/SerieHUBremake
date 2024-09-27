@@ -16,6 +16,7 @@ class SeriesViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var searchText = ""
     @Published var filteredSeries: [Series] = []
+    @Published var cast: [CastMember] = []
     
     private var cancellables = Set<AnyCancellable>()
     private let apiService: APIService
@@ -23,6 +24,7 @@ class SeriesViewModel: ObservableObject {
     init(apiService: APIService = APIService()) {
         self.apiService = apiService
         
+        // Débouncer pour éviter les requêtes trop rapides lors de la saisie dans la barre de recherche
         $searchText
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .sink { [weak self] _ in
@@ -35,8 +37,10 @@ class SeriesViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
+        // Identifiants des plateformes à récupérer
         let platforms = ["Disney+": 337, "Netflix": 8, "Prime Video": 119, "Apple TV+": 350, "OCS": 531, "Crunchyroll": 283]
         
+        // Combine plusieurs appels API dans une seule opération
         Publishers.Zip3(
             apiService.fetchTrendingSeries(),
             apiService.fetchTopRatedSeries(),
@@ -63,6 +67,7 @@ class SeriesViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
+    // Filtre les séries en fonction du texte de recherche
     func filterSeries() {
         if searchText.isEmpty {
             filteredSeries = []
@@ -70,5 +75,19 @@ class SeriesViewModel: ObservableObject {
             filteredSeries = (trendingSeries + topRatedSeries + seriesByPlatform.values.flatMap { $0 })
                 .filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
+    }
+    
+    // Récupère le casting pour une série spécifique
+    func fetchCast(for seriesId: Int) {
+        apiService.fetchCast(for: seriesId)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                if case .failure(let error) = completion {
+                    self?.errorMessage = error.localizedDescription
+                }
+            }, receiveValue: { [weak self] castResponse in
+                self?.cast = castResponse.cast
+            })
+            .store(in: &cancellables)
     }
 }

@@ -2,9 +2,9 @@ import SwiftUI
 
 struct SideMenuView: View {
     @Binding var isOpen: Bool
-    let width: CGFloat
     let onClose: () -> Void
     let onMenuItemSelected: (String) -> Void
+    @State private var showAuthenticationView = false
     
     var body: some View {
         ZStack {
@@ -19,66 +19,118 @@ struct SideMenuView: View {
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Menu")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                        UserProfileView()
                             .padding(.top, 50)
                             .padding(.bottom, 30)
-                            .padding(.horizontal)
                         
-                        VStack(alignment: .leading, spacing: 25) {
-                            MenuItemView(title: "Recherche", icon: "magnifyingglass") {
-                                onMenuItemSelected("Recherche")
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 25) {
+                                MenuSection(title: "Parcourir", items: [
+                                    MenuItem(title: "Accueil", icon: "house"),
+                                    MenuItem(title: "Séries", icon: "tv")
+                                ], onMenuItemSelected: onMenuItemSelected, showAuthenticationView: $showAuthenticationView)
+                                
+                                Divider()
+                                    .background(Color.gray)
+                                    .padding(.vertical)
+                                
+                                MenuSection(title: "Bibliothèque", items: [
+                                    MenuItem(title: "Ma Liste", icon: "heart")
+                                ], onMenuItemSelected: onMenuItemSelected, showAuthenticationView: $showAuthenticationView)
+                                
+                                Divider()
+                                    .background(Color.gray)
+                                    .padding(.vertical)
+                                
+                                MenuSection(title: "Paramètres", items: [
+                                    MenuItem(title: "Compte", icon: "person.circle")
+                                ], onMenuItemSelected: onMenuItemSelected, showAuthenticationView: $showAuthenticationView)
                             }
-                            
-                            MenuItemView(title: "Acteurs", icon: "person.2") {
-                                onMenuItemSelected("Acteurs")
-                            }
-                            
-                            MenuItemView(title: "Genre", icon: "film") {
-                                onMenuItemSelected("Genre")
-                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                         
                         Spacer()
                     }
-                    .frame(width: width)
-                    .background(
-                        LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.9), Color.gray.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
-                    )
+                    .frame(width: UIScreen.main.bounds.width * 0.8)
+                    .background(Color.black.opacity(0.9))
                     .edgesIgnoringSafeArea(.vertical)
-                    .offset(x: isOpen ? 0 : -width)
+                    .offset(x: isOpen ? 0 : -UIScreen.main.bounds.width)
                     .animation(.default)
                     
                     Spacer()
                 }
+            }
+            
+            NavigationLink(destination: AuthenticationView(), isActive: $showAuthenticationView) {
+                EmptyView()
             }
         }
         .edgesIgnoringSafeArea(.all)
     }
 }
 
-struct MenuItemView: View {
+struct UserProfileView: View {
+    var body: some View {
+        HStack(spacing: 15) {
+            Image(systemName: "person.crop.circle")
+                .resizable()
+                .frame(width: 60, height: 60)
+                .foregroundColor(.gray)
+            
+            VStack(alignment: .leading, spacing: 5) {
+                Text("John Doe")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Text("john.doe@example.com")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct MenuSection: View {
     let title: String
-    let icon: String
-    let action: () -> Void
+    let items: [MenuItem]
+    let onMenuItemSelected: (String) -> Void
+    @Binding var showAuthenticationView: Bool
     
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 15) {
-                Image(systemName: icon)
-                    .foregroundColor(.white)
-                    .font(.system(size: 22))
-                    .frame(width: 24, height: 24)
-                
-                Text(title)
-                    .foregroundColor(.white)
-                    .font(.headline)
-                
-                Spacer()
+        VStack(alignment: .leading, spacing: 15) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.gray)
+                .padding(.bottom, 5)
+            
+            ForEach(items) { item in
+                Button(action: {
+                    if item.title == "Compte" {
+                        showAuthenticationView = true
+                    } else {
+                        onMenuItemSelected(item.title)
+                    }
+                }) {
+                    HStack(spacing: 15) {
+                        Image(systemName: item.icon)
+                            .foregroundColor(.white)
+                            .font(.system(size: 22))
+                            .frame(width: 24, height: 24)
+                        
+                        Text(item.title)
+                            .foregroundColor(.white)
+                            .font(.body)
+
+                        Spacer()
+                    }
+                }
             }
         }
     }
+}
+
+struct MenuItem: Identifiable {
+    let id = UUID()
+    let title: String
+    let icon: String
 }
