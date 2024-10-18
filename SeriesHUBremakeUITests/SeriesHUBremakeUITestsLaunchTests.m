@@ -22,12 +22,12 @@
 }
 
 - (void)testLaunch {
+    // Tester le lancement de l'application
+
     XCUIApplication *app = [[XCUIApplication alloc] init];
     [app launch];
 
-    // Insert steps here to perform after app launch but before taking a screenshot,
-    // such as logging into a test account or navigating somewhere in the app
-
+    // Vérifier que l'application est bien lancée
     XCTAttachment *attachment = [XCTAttachment attachmentWithScreenshot:XCUIScreen.mainScreen.screenshot];
     attachment.name = @"Launch Screen";
     attachment.lifetime = XCTAttachmentLifetimeKeepAlways;

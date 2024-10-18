@@ -14,29 +14,61 @@
 @implementation SeriesHUBremakeUITests
 
 - (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-
-    // In UI tests it is usually best to stop immediately when a failure occurs.
+    // Mettre en place le code ici. Cette méthode est appelée avant chaque test de la classe.
     self.continueAfterFailure = NO;
 
-    // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    // Lancer l'application pour chaque test.
+    XCUIApplication *app = [[XCUIApplication alloc] init];
+    [app launch];
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // Mettre le code de nettoyage ici. Cette méthode est appelée après chaque test de la classe.
 }
 
-- (void)testExample {
-    // UI tests must launch the application that they test.
-    XCUIApplication *app = [[XCUIApplication alloc] init];
-    [app launch];
 
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+
+- (void)testTrendingSeriesSectionExists {
+    // Vérifier que la section des "Tendances" est bien visible
+
+    XCUIApplication *app = [[XCUIApplication alloc] init];
+    
+    // Attendre que la section "Tendances" apparaisse
+    XCUIElement *trendingSection = app.staticTexts[@"Tendances"];
+    XCTAssertTrue([trendingSection waitForExistenceWithTimeout:5]);
+}
+
+- (void)testTopRatedSeriesSectionExists {
+    // Vérifier que la section des "Les mieux notées" est visible
+
+    XCUIApplication *app = [[XCUIApplication alloc] init];
+    
+    // Attendre que la section "Les mieux notées" apparaisse
+    XCUIElement *topRatedSection = app.staticTexts[@"Les mieux notées"];
+    XCTAssertTrue([topRatedSection waitForExistenceWithTimeout:5]);
+}
+
+- (void)testSeriesPlatformsSectionExists {
+    // Vérifier l'affichage des plateformes (Disney+, Netflix, etc.)
+
+    XCUIApplication *app = [[XCUIApplication alloc] init];
+
+    // Vérifier que la section "Disney+" est visible
+    XCUIElement *disneySection = app.staticTexts[@"Disney+"];
+    XCTAssertTrue([disneySection waitForExistenceWithTimeout:5]);
+
+    // Vérifier que la section "Netflix" est visible
+    XCUIElement *netflixSection = app.staticTexts[@"Netflix"];
+    XCTAssertTrue([netflixSection waitForExistenceWithTimeout:5]);
+
+    // Vérifier que la section "Prime Video" est visible
+    XCUIElement *primeSection = app.staticTexts[@"Prime Video"];
+    XCTAssertTrue([primeSection waitForExistenceWithTimeout:5]);
 }
 
 - (void)testLaunchPerformance {
     if (@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *)) {
-        // This measures how long it takes to launch your application.
+        // Mesurer le temps de lancement de l'application.
         [self measureWithMetrics:@[[[XCTApplicationLaunchMetric alloc] init]] block:^{
             [[[XCUIApplication alloc] init] launch];
         }];
