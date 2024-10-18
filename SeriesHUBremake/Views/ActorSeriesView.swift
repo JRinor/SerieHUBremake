@@ -1,14 +1,12 @@
 import SwiftUI
-import Combine
 
 struct ActorSeriesView: View {
     let actor: CastMember
-    @State private var series: [Series] = []
-    @State private var cancellable: AnyCancellable? = nil
+    @ObservedObject var viewModel: SeriesViewModel
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        NavigationView {  // Ensure the view is inside a NavigationView
+        NavigationView {
             VStack {
                 HStack {
                     backButton
@@ -21,45 +19,31 @@ struct ActorSeriesView: View {
                 }
                 .padding()
 
-                ScrollView {
-                    if series.isEmpty {
-                        Text("Chargement des séries...")
-                            .foregroundColor(.white)
-                    } else {
-                        ForEach(series) { serie in
-                            NavigationLink(destination: SeriesDetailView(series: serie)) {
-                                HStack {
-                                    AsyncImage(url: serie.imageUrl) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 100, height: 150)
-                                        default:
-                                            Color.gray
-                                                .frame(width: 100, height: 150)
-                                        }
-                                    }
-                                    Text(serie.name)
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                        .padding(.leading, 10)
-
-                                    Spacer()
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                } else if viewModel.seriesByActor.isEmpty {
+                    Text("Aucune série trouvée pour cet acteur.")
+                        .foregroundColor(.gray)
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                            ForEach(viewModel.seriesByActor) { serie in
+                                NavigationLink(destination: SeriesDetailView(series: serie)) {
+                                    SerieItemView(serie: serie)
                                 }
-                                .padding(.horizontal)
-                                .padding(.vertical, 5)
                             }
                         }
+                        .padding()
                     }
                 }
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
-            .foregroundColor(.white)
-            .onAppear {
-                fetchSeriesForActor(actorId: actor.id)
-            }
+            .navigationBarHidden(true)
+        }
+        .onAppear {
+            viewModel.fetchSeriesByActor(actorId: actor.id)
         }
     }
 
@@ -71,20 +55,5 @@ struct ActorSeriesView: View {
                 .background(Color.black.opacity(0.6))
                 .clipShape(Circle())
         }
-    }
-
-    private func fetchSeriesForActor(actorId: Int) {
-        cancellable = APIService().fetchSeriesByActor(actorId: actorId)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .failure(let error):
-                    print("Erreur lors de la récupération des séries: \(error)")
-                case .finished:
-                    break
-                }
-            }, receiveValue: { series in
-                self.series = series
-            })
     }
 }

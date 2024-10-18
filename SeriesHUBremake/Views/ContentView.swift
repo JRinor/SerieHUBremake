@@ -41,18 +41,7 @@ struct ContentView: View {
 
                         VStack {
                             HStack {
-                                // Menu Button
-                                Button(action: {
-                                    withAnimation {
-                                        self.showMenu.toggle()
-                                    }
-                                }) {
-                                    Image(systemName: "line.horizontal.3")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 22))
-                                }
-
-                                Spacer()
+                                Spacer()  // Retire le bouton de menu, garde l'espacement ici
 
                                 // Logo or Title
                                 if !isSearching {
@@ -101,14 +90,6 @@ struct ContentView: View {
                             Spacer()
                         }
                         .edgesIgnoringSafeArea(.top)
-
-                        SideMenuView(isOpen: $showMenu, onClose: {
-                            withAnimation {
-                                self.showMenu = false
-                            }
-                        }, onMenuItemSelected: { item in
-                            print("Selected menu item: \(item)")
-                        })
                     }
                 }
                 .navigationViewStyle(StackNavigationViewStyle())

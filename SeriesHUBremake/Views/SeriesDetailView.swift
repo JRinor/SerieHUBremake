@@ -103,7 +103,7 @@ struct SeriesDetailView: View {
             }
             .sheet(isPresented: $showActorSeries) {
                 if let actor = selectedActor {
-                    ActorSeriesView(actor: actor) // Ne pas passer `series`
+                    ActorSeriesView(actor: actor, viewModel: viewModel)
                 }
             }
         }
@@ -119,6 +119,7 @@ struct SeriesDetailView: View {
         }
     }
 }
+
 
 struct TabButton: View {
     let title: String

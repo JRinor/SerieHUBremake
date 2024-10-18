@@ -25,7 +25,6 @@ class SeriesViewModel: ObservableObject {
     init(apiService: APIService = APIService()) {
         self.apiService = apiService
         
-        // Debouncer to avoid excessive requests during search
         $searchText
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .sink { [weak self] _ in
@@ -38,7 +37,6 @@ class SeriesViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        // Platform IDs
         let platforms = ["Disney+": 337, "Netflix": 8, "Prime Video": 119, "Apple TV+": 350, "OCS": 531, "Crunchyroll": 283]
         
         Publishers.Zip3(
@@ -77,9 +75,11 @@ class SeriesViewModel: ObservableObject {
     }
     
     func fetchCast(for seriesId: Int) {
+        isLoading = true
         apiService.fetchCast(for: seriesId)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
+                self?.isLoading = false
                 if case .failure(let error) = completion {
                     self?.errorMessage = error.localizedDescription
                 }
@@ -90,10 +90,15 @@ class SeriesViewModel: ObservableObject {
     }
     
     func fetchSeriesByActor(actorId: Int) {
+        isLoading = true
+        seriesByActor = [] // Réinitialiser la liste pour chaque nouvel acteur
+        
         apiService.fetchSeriesByActor(actorId: actorId)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
+                self?.isLoading = false
                 if case .failure(let error) = completion {
+                    print("Error fetching series for actor: \(error)")
                     self?.errorMessage = error.localizedDescription
                 }
             }, receiveValue: { [weak self] series in

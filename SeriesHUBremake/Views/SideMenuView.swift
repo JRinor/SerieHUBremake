@@ -19,16 +19,14 @@ struct SideMenuView: View {
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 0) {
-                        UserProfileView()
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                        
+                        // Ajustement du padding pour positionner légèrement plus bas
                         ScrollView {
                             VStack(alignment: .leading, spacing: 25) {
                                 MenuSection(title: "Parcourir", items: [
                                     MenuItem(title: "Accueil", icon: "house"),
                                     MenuItem(title: "Séries", icon: "tv")
                                 ], onMenuItemSelected: onMenuItemSelected, showAuthenticationView: $showAuthenticationView)
+                                .padding(.top, 30)  // Padding légèrement réduit pour un meilleur placement
                                 
                                 Divider()
                                     .background(Color.gray)
@@ -66,27 +64,6 @@ struct SideMenuView: View {
             }
         }
         .edgesIgnoringSafeArea(.all)
-    }
-}
-
-struct UserProfileView: View {
-    var body: some View {
-        HStack(spacing: 15) {
-            Image(systemName: "person.crop.circle")
-                .resizable()
-                .frame(width: 60, height: 60)
-                .foregroundColor(.gray)
-            
-            VStack(alignment: .leading, spacing: 5) {
-                Text("John Doe")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Text("john.doe@example.com")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-        }
-        .padding(.horizontal)
     }
 }
 

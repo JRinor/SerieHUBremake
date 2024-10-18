@@ -48,25 +48,26 @@ class APIService {
     func fetchSeriesByActor(actorId: Int) -> AnyPublisher<[Series], Error> {
         print("Fetching series for actorId: \(actorId)")  // Debugging actorId
 
-        var components = URLComponents(string: "\(baseURL)/discover/tv")!
+        guard var components = URLComponents(string: "\(baseURL)/discover/tv") else {
+            return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+        }
+
         components.queryItems = [
             URLQueryItem(name: "with_cast", value: String(actorId)),
             URLQueryItem(name: "language", value: "fr-FR"),
-            URLQueryItem(name: "sort_by", value: "popularity.desc") // Ajout pour trier les séries
+            URLQueryItem(name: "sort_by", value: "popularity.desc")
         ]
 
+        print("Final URL: \(components.url?.absoluteString ?? "Invalid URL")")
+
         return fetchData(url: components.url!, type: TMDBResponse.self)
-            .handleEvents(receiveOutput: { response in
-                print("Response: \(response)")  // Debug the full response
-            })
-            .map { response in
-                print("Fetched series: \(response.results)")  // Debugging API response
+            .map { response -> [Series] in
+                print("Fetched series: \(response.results)")
                 return response.results
             }
             .eraseToAnyPublisher()
     }
 
-    
     private func fetchSeriesWithMultiplePages(endpoint: String) -> AnyPublisher<[Series], Error> {
         var components = URLComponents(string: "\(baseURL)\(endpoint)")!
         components.queryItems = [
