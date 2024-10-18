@@ -12,6 +12,7 @@ class SeriesViewModel: ObservableObject {
         "OCS": [],
         "Crunchyroll": []
     ]
+    @Published var seriesByActor: [Series] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var searchText = ""
@@ -24,7 +25,7 @@ class SeriesViewModel: ObservableObject {
     init(apiService: APIService = APIService()) {
         self.apiService = apiService
         
-        // Débouncer pour éviter les requêtes trop rapides lors de la saisie dans la barre de recherche
+        // Debouncer to avoid excessive requests during search
         $searchText
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .sink { [weak self] _ in
@@ -37,10 +38,9 @@ class SeriesViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        // Identifiants des plateformes à récupérer
+        // Platform IDs
         let platforms = ["Disney+": 337, "Netflix": 8, "Prime Video": 119, "Apple TV+": 350, "OCS": 531, "Crunchyroll": 283]
         
-        // Combine plusieurs appels API dans une seule opération
         Publishers.Zip3(
             apiService.fetchTrendingSeries(),
             apiService.fetchTopRatedSeries(),
@@ -67,7 +67,6 @@ class SeriesViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
-    // Filtre les séries en fonction du texte de recherche
     func filterSeries() {
         if searchText.isEmpty {
             filteredSeries = []
@@ -77,7 +76,6 @@ class SeriesViewModel: ObservableObject {
         }
     }
     
-    // Récupère le casting pour une série spécifique
     func fetchCast(for seriesId: Int) {
         apiService.fetchCast(for: seriesId)
             .receive(on: DispatchQueue.main)
@@ -87,6 +85,19 @@ class SeriesViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] castResponse in
                 self?.cast = castResponse.cast
+            })
+            .store(in: &cancellables)
+    }
+    
+    func fetchSeriesByActor(actorId: Int) {
+        apiService.fetchSeriesByActor(actorId: actorId)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                if case .failure(let error) = completion {
+                    self?.errorMessage = error.localizedDescription
+                }
+            }, receiveValue: { [weak self] series in
+                self?.seriesByActor = series
             })
             .store(in: &cancellables)
     }

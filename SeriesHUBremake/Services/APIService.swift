@@ -45,6 +45,28 @@ class APIService {
         return fetchData(url: components.url!, type: CastResponse.self)
     }
     
+    func fetchSeriesByActor(actorId: Int) -> AnyPublisher<[Series], Error> {
+        print("Fetching series for actorId: \(actorId)")  // Debugging actorId
+
+        var components = URLComponents(string: "\(baseURL)/discover/tv")!
+        components.queryItems = [
+            URLQueryItem(name: "with_cast", value: String(actorId)),
+            URLQueryItem(name: "language", value: "fr-FR"),
+            URLQueryItem(name: "sort_by", value: "popularity.desc") // Ajout pour trier les séries
+        ]
+
+        return fetchData(url: components.url!, type: TMDBResponse.self)
+            .handleEvents(receiveOutput: { response in
+                print("Response: \(response)")  // Debug the full response
+            })
+            .map { response in
+                print("Fetched series: \(response.results)")  // Debugging API response
+                return response.results
+            }
+            .eraseToAnyPublisher()
+    }
+
+    
     private func fetchSeriesWithMultiplePages(endpoint: String) -> AnyPublisher<[Series], Error> {
         var components = URLComponents(string: "\(baseURL)\(endpoint)")!
         components.queryItems = [
@@ -92,5 +114,14 @@ class APIService {
             .map(\.data)
             .decode(type: T.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
+    }
+}
+
+// Extension to append query items to an existing URL
+extension URL {
+    mutating func append(queryItems: [URLQueryItem]) {
+        guard var components = URLComponents(string: self.absoluteString) else { return }
+        components.queryItems = (components.queryItems ?? []) + queryItems
+        self = components.url!
     }
 }

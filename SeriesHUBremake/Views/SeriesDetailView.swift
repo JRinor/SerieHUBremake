@@ -5,12 +5,14 @@ struct SeriesDetailView: View {
     @State private var selectedTab = 0
     @StateObject private var viewModel = SeriesViewModel()
     @Environment(\.presentationMode) var presentationMode
+    @State private var showActorSeries = false
+    @State private var selectedActor: CastMember?
 
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Header avec image de fond et poster
+                    // Header with background image and poster
                     ZStack(alignment: .bottomLeading) {
                         AsyncImage(url: series.backdropUrl ?? series.imageUrl) { phase in
                             switch phase {
@@ -73,7 +75,7 @@ struct SeriesDetailView: View {
                     }
                     .padding()
 
-                    // Onglets
+                    // Tabs
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
                             TabButton(title: "Détails", isSelected: selectedTab == 0) { selectedTab = 0 }
@@ -84,8 +86,12 @@ struct SeriesDetailView: View {
                         .padding(.horizontal)
                     }
 
-                    TabContent(series: series, selectedTab: selectedTab, cast: viewModel.cast)
-                        .frame(minHeight: 150)
+                    TabContent(series: series, selectedTab: selectedTab, cast: viewModel.cast, onActorSelected: { actor in
+                        selectedActor = actor
+                        viewModel.fetchSeriesByActor(actorId: actor.id)
+                        showActorSeries.toggle()
+                    })
+                    .frame(minHeight: 150)
                 }
                 .frame(width: geometry.size.width)
             }
@@ -94,6 +100,11 @@ struct SeriesDetailView: View {
             .navigationBarItems(leading: backButton)
             .onAppear {
                 viewModel.fetchCast(for: series.id)
+            }
+            .sheet(isPresented: $showActorSeries) {
+                if let actor = selectedActor {
+                    ActorSeriesView(actor: actor) // Ne pas passer `series`
+                }
             }
         }
     }
@@ -124,31 +135,6 @@ struct TabButton: View {
                 .cornerRadius(20)
                 .foregroundColor(.white)
         }
-    }
-}
-
-struct TabContent: View {
-    let series: Series
-    let selectedTab: Int
-    let cast: [CastMember]
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            switch selectedTab {
-            case 0:
-                DetailsView(series: series)
-            case 1:
-                GenresView(genres: series.genreNames)
-            case 2:
-                CastView(cast: cast)
-            case 3:
-                ProductionView(series: series)
-            default:
-                Text("Contenu non disponible")
-                    .foregroundColor(.gray)
-            }
-        }
-        .padding(.horizontal)
     }
 }
 
@@ -186,6 +172,7 @@ struct DetailRow: View {
 
 struct CastView: View {
     let cast: [CastMember]
+    let onActorSelected: (CastMember) -> Void
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -194,14 +181,15 @@ struct CastView: View {
                     VStack {
                         AsyncImage(url: member.profileUrl) { phase in
                             switch phase {
-                            case .empty:
-                                ProgressView()
                             case .success(let image):
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 100, height: 150)
                                     .clipShape(Circle())
+                                    .onTapGesture {
+                                        onActorSelected(member)
+                                    }
                             case .failure(_):
                                 Image(systemName: "person.fill")
                                     .resizable()
@@ -229,5 +217,31 @@ struct CastView: View {
                 }
             }
         }
+    }
+}
+
+struct TabContent: View {
+    let series: Series
+    let selectedTab: Int
+    let cast: [CastMember]
+    let onActorSelected: (CastMember) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            switch selectedTab {
+            case 0:
+                DetailsView(series: series)
+            case 1:
+                GenresView(genres: series.genreNames)
+            case 2:
+                CastView(cast: cast, onActorSelected: onActorSelected)
+            case 3:
+                ProductionView(series: series)
+            default:
+                Text("Contenu non disponible")
+                    .foregroundColor(.gray)
+            }
+        }
+        .padding(.horizontal)
     }
 }
